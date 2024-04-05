@@ -3,8 +3,8 @@ const app = express();
 const port = 3000; // 或者您可以选择其他端口号
 
 // 导入路由
-const indexRoutes = require('./routes/index');
-const userRoutes = require('./routes/userRoutes');
+const indexRoutes = require('./src/routes/index');
+const userRoutes = require('./src/routes/userRoutes');
 
 // 设置基本路由
 app.get('/', (req, res) => {
