@@ -1,7 +1,7 @@
 const UserInfo = require('../models/user');
 const code = require('../common/code');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { jwtCreate } = require('../common/jwt');
 
 // 验证密码是否匹配哈希值
 async function comparePassword(plainPassword, hashedPassword) {
@@ -106,7 +106,7 @@ async function register(req, res) {
     }
 };
 
-// 用户登录逻辑
+// 用户登录逻辑--手机号
 async function login(req, res) {
     const { phoneNumber, password } = req.body;
     // 检查是否提供了手机号和密码
@@ -140,16 +140,7 @@ async function login(req, res) {
         }
 
         // 生成jwt token
-        const token = jwt.sign(
-            {
-                phoneNumber: user.phoneNumber
-            },
-            process.env._JWT,
-            {
-                expiresIn: '30d',
-                algorithm: 'HS256'
-            }
-        );
+        const token = await jwtCreate(user.phoneNumber);
 
         // 创建一个普通的JavaScript对象，并从中删除字段
         const userObject = user.toObject();
