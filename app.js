@@ -1,21 +1,47 @@
-const express = require('express');
-const app = express();
-const port = 3000; // 或者您可以选择其他端口号
+require('dotenv').config();
+var createError = require('http-errors');
+var express = require('express');
+const { jwtVerify, jwtErr } = require('./common/jwt');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-// 导入路由
-const indexRoutes = require('./src/routes/index');
-const userRoutes = require('./src/routes/userRoutes');
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/userRoutes');
 
-// 设置基本路由
-app.get('/', (req, res) => {
-    res.send('欢迎访问后端 API！');
-});
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+app.use(logger('dev'));
+app.use(express.json()); // 解析req
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 解析jwt
+app.use(jwtVerify());
 
 // 使用路由中间件
-app.use('/api', indexRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api', indexRouter);
+app.use('/api/users', usersRouter);
 
-// 启动服务器
-app.listen(port, () => {
-    console.log(`后端服务器正在监听端口 ${port}...`);
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
