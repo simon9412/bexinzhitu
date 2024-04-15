@@ -1,12 +1,5 @@
 const mongoose = require('mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
-// 这里是模型定义和数据库交互的代码，需要根据您使用的数据库和 ORM 来实现
-
-// Connect to MongoDB
-mongoose
-    .connect('mongodb://admin:w123456@54.222.184.73:27017/xinzhitu') // mongodb://用户名:密码@host:端口号/当前使用的数据库名
-    .then(() => console.log('MongoDB connect success!'))
-    .catch(err => console.log(`MongoDB connected failed!${err}`));
 
 // 定义用户信息表结构
 const UserSchema = new mongoose.Schema(
@@ -15,7 +8,10 @@ const UserSchema = new mongoose.Schema(
         phoneNumber: { type: String, unique: true },
         password: String,
         userName: String,
-        avatar: String
+        avatar: String,
+        role: String,
+        gid: Number,
+        use: String
     },
     {
         timestamps: true
@@ -23,6 +19,26 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.plugin(AutoIncrement, { inc_field: 'uid', start_seq: 0 });
+
+// 创建用户中间件函数
+UserSchema.pre('save', async function (next) {
+    // 只有在用户权限为group且gid为0时 才分配gid
+    if (this.role === 'group' && this.gid === 0) {
+        // 查询数据库中是否已存在权限为group的用户
+        const existingGroupUser = await UserInfo.findOne({ role: 'group' }).exec();
+
+        // 如果不存在权限为group的用户，则分配gid为100
+        if (!existingGroupUser) {
+            this.gid = 100;
+        } else {
+            // 查询数据库中最后一个gid的group用户
+            const lastGroupUser = await UserInfo.findOne({ role: 'group' }).sort({ 'gid': -1 }).exec();
+            this.gid = lastGroupUser.gid + 1;
+        }
+    }
+    // 执行下一个中间件函数
+    next();
+});
 
 // 创建用户数据模型
 const UserInfo = mongoose.model('UserInfo', UserSchema);
