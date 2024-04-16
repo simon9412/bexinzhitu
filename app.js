@@ -10,6 +10,7 @@ const { connectMongoDB } = require('./models/mongo');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
+var skuRouter = require('./routes/skuRoutes');
 
 
 // 连接mongodb
@@ -33,6 +34,7 @@ app.use(jwtVerify());
 // 使用路由中间件
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/sku', skuRouter);
 
 
 app.use(jwtError());

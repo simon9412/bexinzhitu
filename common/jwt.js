@@ -28,7 +28,8 @@ function jwtVerify() {
             '/api',
             // '/api/users/register',
             '/api/users/login',
-            '/api/users/getUserInfo'
+            '/api/users/getUserInfo',
+            '/api/sku/getList'
         ]
     })
 };

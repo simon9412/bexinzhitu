@@ -2,6 +2,7 @@ const UserInfo = require('../models/user');
 const statusCode = require('../common/statusCode');
 const bcrypt = require('bcryptjs');
 const { jwtCreate } = require('../common/jwt');
+const { ALLOWED_ROLES, ALLOWED_USE } = require('../common/enum');
 
 // 验证密码是否匹配哈希值
 async function comparePassword(plainPassword, hashedPassword) {
@@ -95,7 +96,7 @@ async function register(req, res) {
         await user.save();
 
         // 注册成功后返回数据
-        res.status(200).json({
+        return res.status(200).json({
             statusCode: statusCode.success,
             msg: '注册成功',
             data: [{
@@ -109,7 +110,7 @@ async function register(req, res) {
         });
     } catch (err) {
         console.error('注册出错:', err);
-        res.status(500).json({
+        return res.status(500).json({
             statusCode: statusCode.failed,
             msg: 'Internal Server Error'
         });
@@ -166,7 +167,7 @@ async function login(req, res) {
 
 
         // 登录成功
-        res.status(200).json({
+        return res.status(200).json({
             statusCode: statusCode.success,
             msg: '登录成功',
             data: [userObject]
@@ -180,7 +181,7 @@ async function login(req, res) {
     }
 };
 
-// 获取注册用户列表
+// 获取所有用户列表
 async function getUserList(req, res) {
     const user = await UserInfo.find().select({ password: 0, _id: 0, __v: 0 });
     return res.status(200).json({
@@ -232,9 +233,6 @@ async function updateUserInfo(req, res) {
         use // 非必传
     } = req.body;
 
-    // 权限必须三选一
-    const allowedRoles = ['admin', 'group', 'user'];
-    const allowedUse = ['normal', 'banned'];
     // 更新条件，筛选出哪一条数据
     var filter = {};
 
@@ -258,20 +256,20 @@ async function updateUserInfo(req, res) {
 
     if (req.auth && req.auth.role === 'admin') {
         if (role) {
-            if (!allowedRoles.includes(role)) {
+            if (!ALLOWED_ROLES.includes(role)) {
                 return res.status(400).json({
                     statusCode: statusCode.err,
-                    msg: '参数异常'
+                    msg: 'role参数异常'
                 });
             }
             newRole = role;
         }
 
         if (use) {
-            if (!allowedUse.includes(use)) {
+            if (!ALLOWED_USE.includes(use)) {
                 return res.status(400).json({
                     statusCode: statusCode.err,
-                    msg: '参数异常2'
+                    msg: 'use参数异常'
                 });
             }
             newUse = use;

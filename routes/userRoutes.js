@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { checkAdminPermission } = require('../common/jwt')
+const { checkAdminPermission } = require('../common/jwt');
 
 // 用户注册路由(需要管理员权限注册)
 router.post('/register', checkAdminPermission, userController.register);
