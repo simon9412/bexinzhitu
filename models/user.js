@@ -4,14 +4,14 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 // 定义用户信息表结构
 const UserSchema = new mongoose.Schema(
     {
-        uid: { type: Number, default: 0 },
-        phoneNumber: { type: String, unique: true },
-        password: String,
-        userName: String,
-        avatar: String,
-        role: String,
-        gid: Number,
-        use: String
+        uid: { type: Number, default: 0 }, // uid
+        phoneNumber: { type: String, unique: true }, // 手机号
+        password: String, // 密码
+        userName: String, // 用户名
+        avatar: String, // 头像url
+        role: String, // 权限
+        gid: Number, // 组id
+        use: String // 使用状态
     },
     {
         timestamps: true

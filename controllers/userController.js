@@ -24,7 +24,7 @@ async function passwordHash(password) {
                 // console.error('密码哈希时出错：', err);
                 // 返回错误信息
                 return res.status(500).json({
-                    statusCode: statusCode.err,
+                    statusCode: statusCode.serverErr,
                     msg: '内部服务器错误'
                 });
             } else {
@@ -53,7 +53,14 @@ function validatePassword(password) {
     return passwordRegex.test(password);
 };
 
-// 用户注册逻辑
+
+/**
+ * @description 后台用户注册逻辑，仅限管理员操作
+ * @method POST
+ * @param {Number} phoneNumber - 手机号
+ * @param {String} password - 密码
+ * @returns Promise
+ */
 async function register(req, res) {
     const { phoneNumber, password } = req.body;
     try {
@@ -117,7 +124,13 @@ async function register(req, res) {
     }
 };
 
-// 用户登录逻辑--手机号
+/**
+ * @description 后台用户登录逻辑--手机号
+ * @method POST
+ * @param {Number} phoneNumber - 手机号
+ * @param {String} password - 密码
+ * @returns Promise
+ */
 async function login(req, res) {
     const { phoneNumber, password } = req.body;
     // 检查是否提供了手机号和密码
@@ -175,24 +188,34 @@ async function login(req, res) {
     } catch (err) {
         console.error('登录出错:', err);
         return res.status(500).json({
-            statusCode: statusCode.err,
+            statusCode: statusCode.serverErr,
             msg: '服务器错误'
         });
     }
 };
 
-// 获取所有用户列表
+/**
+ * @description 获取所有用户列表
+ * @method GET
+ * @param null - 无参数
+ * @returns Promise
+ */
 async function getUserList(req, res) {
     const user = await UserInfo.find().select({ password: 0, _id: 0, __v: 0 });
     return res.status(200).json({
         statusCode: statusCode.success,
         msg: 'success',
         data: [user]
-
     });
 }
 
-// 获取单个用户信息
+/**
+ * @description 获取单个用户信息
+ * @method GET
+ * @param {Number} uid - uid
+ * @param {Number} phoneNumber - 手机号
+ * @returns Promise
+ */
 async function getUserInfo(req, res) {
     const { uid, phoneNumber } = req.query;
     var user = null;
@@ -220,7 +243,19 @@ async function getUserInfo(req, res) {
     }
 }
 
-// 更新单个用户信息
+/**
+ * @description 更新单个用户信息
+ * @method POST
+ * @param {Number} uid - uid
+ * @param {Number} phoneNumber - 手机号
+ * @param {String} userName - 用户名，非必传
+ * @param {String} avatar - 用户头像 非必传
+ * @param {String} password - 密码 非必传
+ * @param {String} role - 权限 非必传
+ * @param {Number} gid - 组id 非必传
+ * @param {String} use - 使用状态 非必传
+ * @returns Promise
+ */
 async function updateUserInfo(req, res) {
     const {
         uid, // 二选一
@@ -245,7 +280,7 @@ async function updateUserInfo(req, res) {
     } else {
         // 如果都不存在，则返回错误消息
         return res.status(400).json({
-            statusCode: statusCode.err,
+            statusCode: statusCode.paramErr,
             msg: '请传入参数',
         });
     }
@@ -258,7 +293,7 @@ async function updateUserInfo(req, res) {
         if (role) {
             if (!ALLOWED_ROLES.includes(role)) {
                 return res.status(400).json({
-                    statusCode: statusCode.err,
+                    statusCode: statusCode.paramErr,
                     msg: 'role参数异常'
                 });
             }
@@ -268,7 +303,7 @@ async function updateUserInfo(req, res) {
         if (use) {
             if (!ALLOWED_USE.includes(use)) {
                 return res.status(400).json({
-                    statusCode: statusCode.err,
+                    statusCode: statusCode.paramErr,
                     msg: 'use参数异常'
                 });
             }
@@ -318,7 +353,13 @@ async function updateUserInfo(req, res) {
     });
 }
 
-// 删除用户
+/**
+ * @description 删除用户，仅限管理员操作
+ * @method POST
+ * @param {Number} uid - uid
+ * @param {Number} phoneNumber - 手机号
+ * @returns Promise
+ */
 async function deleteUser(req, res) {
     const { uid, phoneNumber } = req.body;
 
@@ -326,7 +367,7 @@ async function deleteUser(req, res) {
         const uidDel = await UserInfo.deleteOne({ uid: uid });
         if (uidDel.deletedCount === 0) {
             return res.status(400).json({
-                statusCode: statusCode.err,
+                statusCode: statusCode.paramErr,
                 msg: 'uid不存在',
             });
         }
@@ -334,13 +375,13 @@ async function deleteUser(req, res) {
         const phoneNumberDel = await UserInfo.deleteOne({ phoneNumber: phoneNumber });
         if (phoneNumberDel.deletedCount === 0) {
             return res.status(400).json({
-                statusCode: statusCode.err,
+                statusCode: statusCode.paramErr,
                 msg: 'uid不存在',
             });
         }
     } else {
         return res.status(400).json({
-            statusCode: statusCode.err,
+            statusCode: statusCode.paramErr,
             msg: '请传入参数',
         });
     }
@@ -352,11 +393,47 @@ async function deleteUser(req, res) {
     });
 }
 
+/**
+ * @description 查询当前登录账号的信息
+ * @method GET
+ * @param null - 无参数
+ * @returns Promise
+ */
+async function getProfileInfo(req, res) {
+    const user = await UserInfo.findOne({ phoneNumber: req.auth.phoneNumber }).select({ password: 0, _id: 0, __v: 0 });
+    return res.status(200).json({
+        statusCode: statusCode.success,
+        msg: 'success',
+        data: [user]
+    });
+}
+
+/**
+ * @description 查询下级用户,至少需要group权限
+ * @method GET
+ * @param null - 五参数
+ * @returns Promise
+ */
+async function getUnderlingUser(req, res) {
+    const user = await UserInfo.findOne({ phoneNumber: req.auth.phoneNumber }).select({ password: 0, _id: 0, __v: 0 });
+    // 查询具有相同gid的用户数据
+    const usersWithSameGid = await UserInfo.find({ gid: user.gid }).select({ password: 0, _id: 0, __v: 0 });
+    console.log(usersWithSameGid);
+
+    return res.status(200).json({
+        statusCode: statusCode.success,
+        msg: 'success',
+        data: usersWithSameGid
+    });
+}
+
 module.exports = {
     register,
     login,
     getUserList,
     getUserInfo,
     updateUserInfo,
-    deleteUser
+    deleteUser,
+    getUnderlingUser,
+    getProfileInfo
 }

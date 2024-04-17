@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { checkAdminPermission } = require('../common/jwt');
+const { checkAdminPermission, checkGroupPermission } = require('../common/jwt');
 
 // 用户注册路由(需要管理员权限注册)
 router.post('/register', checkAdminPermission, userController.register);
@@ -20,5 +20,12 @@ router.post('/updateUserInfo', userController.updateUserInfo);
 
 // 删除用户
 router.post('/deleteUser', checkAdminPermission, userController.deleteUser);
+
+// 查询下级用户
+router.get('/getUnderlingUser', checkGroupPermission, userController.getUnderlingUser);
+
+// 查询当前登录账号的信息
+router.get('/getProfileInfo', userController.getProfileInfo);
+
 
 module.exports = router;

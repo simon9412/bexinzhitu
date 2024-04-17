@@ -29,7 +29,11 @@ function jwtVerify() {
             // '/api/users/register',
             '/api/users/login',
             '/api/users/getUserInfo',
-            '/api/sku/getList'
+
+            {
+                url: /^\/api\/sku\/\w+/,
+                methods: ['GET']
+            }
         ]
     })
 };
@@ -39,7 +43,7 @@ function jwtError() {
     return (err, req, res, next) => {
         if (err.name === 'UnauthorizedError') {
             res.status(401).json({
-                statusCode: statusCode.err,
+                statusCode: statusCode.paramErr,
                 msg: '无效token,请重新登录！'
             });
         } else {
@@ -57,7 +61,22 @@ const checkAdminPermission = (req, res, next) => {
     } else {
         // 用户没有权限，返回错误响应
         return res.status(403).json({
-            statusCode: statusCode.err,
+            statusCode: statusCode.paramErr,
+            msg: 'Forbidden: Insufficient permissions'
+        });
+    }
+};
+
+// 验证管理员或主管权限的中间件
+const checkGroupPermission = (req, res, next) => {
+    // 检查用户是否已通过身份验证并且 role 为 admin 或 group
+    if (req.auth && req.auth.role !== 'user') {
+        // 用户具有权限，继续处理请求
+        next();
+    } else {
+        // 用户没有权限，返回错误响应
+        return res.status(403).json({
+            statusCode: statusCode.paramErr,
             msg: 'Forbidden: Insufficient permissions'
         });
     }
@@ -67,6 +86,7 @@ module.exports = {
     jwtCreate,
     jwtVerify,
     jwtError,
-    checkAdminPermission
+    checkAdminPermission,
+    checkGroupPermission
 };
 
