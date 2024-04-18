@@ -4,23 +4,24 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 // 定义用户信息表结构
 const UserSchema = new mongoose.Schema(
     {
-        uid: { type: Number, default: 0 }, // uid
+        uid: { type: Number, unique: true }, // uid
         phoneNumber: { type: String, unique: true }, // 手机号
-        password: String, // 密码
-        userName: String, // 用户名
-        avatar: String, // 头像url
-        role: String, // 权限
-        gid: Number, // 组id
-        use: String // 使用状态
+        password: { type: String, required: true }, // 密码
+        userName: { type: String, required: true }, // 用户名
+        avatar: { type: String, default: '' }, // 头像url
+        role: { type: String, default: 'user' }, // 权限
+        gid: { type: Number, default: 0 }, // 组id
+        use: { type: String, default: 'normal' }, // 使用状态
+        bindInfo: { type: [String], default: [] }// 绑定的微信客户，存openid
     },
     {
         timestamps: true
     }
 );
 
-UserSchema.plugin(AutoIncrement, { inc_field: 'uid', start_seq: 0 });
+UserSchema.plugin(AutoIncrement, { inc_field: 'uid', start_seq: 1001 });
 
-// 创建用户中间件函数
+// 修改用户权限时的中间件函数
 UserSchema.pre('save', async function (next) {
     // 只有在用户权限为group且gid为0时 才分配gid
     if (this.role === 'group' && this.gid === 0) {

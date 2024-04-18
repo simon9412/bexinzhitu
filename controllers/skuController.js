@@ -154,7 +154,17 @@ async function addSku(req, res) {
 
     try {
         const skuInfos = [];
-        await Promise.all(skuInfo.map(async ({ category, goodName, property, unit, brandName, originalPrice, inventory }) => {
+        await Promise.all(skuInfo.map(async ({
+            category,
+            goodName,
+            property,
+            unit,
+            brandName,
+            originalPrice,
+            inventory,
+            description,
+            image
+        }) => {
             // 判断是否category是否符合标准
             if (!CATEGORY.includes(category)) {
                 return { goodName, status: 'error', message: '无效的商品类别' };
@@ -162,7 +172,16 @@ async function addSku(req, res) {
             const Model = mongoose.model(category);
 
             // 创建商品对象并保存到对应的子表中
-            const goodInfo = new Model({ goodName, property, unit, brandName, originalPrice, inventory });
+            const goodInfo = new Model({
+                goodName,
+                property,
+                unit,
+                brandName,
+                originalPrice,
+                inventory,
+                description,
+                image
+            });
             await goodInfo.save();
             // 创建相对应的 Sku 记录并保存到数据库
             const sku = new Sku({ category, goodInfo: goodInfo._id });
@@ -176,7 +195,9 @@ async function addSku(req, res) {
                 unit: goodInfo.unit,
                 brandName: goodInfo.brandName,
                 originalPrice: goodInfo.originalPrice,
-                inventory: goodInfo.inventory
+                inventory: goodInfo.inventory,
+                description: goodInfo.description,
+                image: goodInfo.image
             });
         }));
 
@@ -234,7 +255,7 @@ async function updateSku(req, res) {
 
             // 在旧子表中查找商品信息
             const existingProduct = await OldModel.findOne({ _id: existingSku.goodInfo });
-            console.log(existingProduct)
+            // console.log(existingProduct)
 
             if (!existingProduct) {
                 return { goodId: sku.goodId, status: 'error', message: '商品不存在' };
@@ -246,7 +267,9 @@ async function updateSku(req, res) {
                 property: sku.property ? sku.property : existingProduct.property,
                 unit: sku.unit ? sku.unit : existingProduct.unit,
                 inventory: sku.inventory ? sku.inventory : existingProduct.inventory,
-                originalPrice: sku.originalPrice ? sku.originalPrice : existingProduct.originalPrice
+                originalPrice: sku.originalPrice ? sku.originalPrice : existingProduct.originalPrice,
+                description: sku.description ? sku.description : existingProduct.description,
+                image: sku.image ? sku.image : existingProduct.image
             }
             // 创建新子表中的商品信息
             const newProduct = new NewModel(newInfo);
@@ -349,7 +372,6 @@ async function searchSku(req, res) {
 
     // 没传参数直接返回空数据
     if (!keyword) {
-        console.log('sdasd');
         return res.status(200).json({
             statusCode: statusCode.success,
             msg: '查询成功',
@@ -393,8 +415,8 @@ async function searchSku(req, res) {
         });
         pipeline.push(
             {
-                $project: { // 将所有查询结果合并
-                    skuInfo: { $concatArrays: CATEGORY_PREFIX },
+                $project: {
+                    skuInfo: { $concatArrays: CATEGORY_PREFIX }, // 将所有查询结果合并
                     goodId: 1, // 0不展示，1展示
                     category: 1, // 0不展示，1展示
                     _id: 0 // 0不展示，1展示
@@ -416,14 +438,16 @@ async function searchSku(req, res) {
             {
                 $project: { // 选择要返回的字段
                     category: 1,
-                    goodId: 1, // 包含 goodId 字段
+                    goodId: 1,
                     goodInfo: {
                         goodName: '$skuInfo.goodName',
                         brandName: '$skuInfo.brandName',
                         property: '$skuInfo.property',
                         unit: '$skuInfo.unit',
                         originalPrice: '$skuInfo.originalPrice',
-                        inventory: '$skuInfo.inventory'
+                        inventory: '$skuInfo.inventory',
+                        description: '$skuInfo.description',
+                        image: '$skuInfo.image',
                     }
                 }
             }

@@ -11,6 +11,9 @@ const { connectMongoDB } = require('./models/mongo');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var skuRouter = require('./routes/skuRoutes');
+var cartRouter = require('./routes/cartRoutes');
+var wxusersRouer = require('./routes/wxuserRoutes');
+
 
 
 // 连接mongodb
@@ -35,6 +38,9 @@ app.use(jwtVerify());
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/sku', skuRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/wxusers', wxusersRouer);
+
 
 
 app.use(jwtError());

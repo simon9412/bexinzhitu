@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const skuController = require('../controllers/skuController');
-const { checkAdminPermission } = require('../common/jwt')
+const { checkAdminPermission } = require('../common/jwt');
 
 // 查询品牌列表
 router.get('/getBrandList', skuController.getBrandList);

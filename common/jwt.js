@@ -3,19 +3,15 @@ const statusCode = require('./statusCode');
 const jwt = require('jsonwebtoken');
 
 // 生成jwt token
-async function jwtCreate(n, r) {
+async function jwtCreate(payload, expiresTime) {
     return jwt.sign(
-        {
-            phoneNumber: n,
-            role: r
-        },
+        payload,
         process.env._JWT,
         {
-            expiresIn: '30d',
+            expiresIn: expiresTime ? expiresTime : '7d',
             algorithm: 'HS256'
         }
     );
-
 };
 
 // 验证jwt，配置不需要验证的api
@@ -26,14 +22,15 @@ function jwtVerify() {
     }).unless({
         path: [
             '/api',
+            // /^\/api\/wxusers\/\w+/,
             // '/api/users/register',
             '/api/users/login',
             '/api/users/getUserInfo',
-
             {
                 url: /^\/api\/sku\/\w+/,
                 methods: ['GET']
-            }
+            },
+            '/api/wxusers/wxLogin'
         ]
     })
 };

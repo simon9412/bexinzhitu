@@ -95,10 +95,7 @@ async function register(req, res) {
         const user = new UserInfo({
             phoneNumber: phoneNumber,
             password: hashPassword,
-            userName: `user_${phoneNumber}`,
-            role: 'user', // 默认值 user
-            gid: 0, // 默认值0
-            use: 'normal'
+            userName: `user_${phoneNumber}`
         });
         await user.save();
 
@@ -110,9 +107,11 @@ async function register(req, res) {
                 uid: user.uid,
                 phoneNumber,
                 userName: user.userName,
+                avatar: user.avatar,
                 role: user.role,
                 gid: user.gid,
-                use: user.use
+                use: user.use,
+                bindInfo: user.bindInfo
             }]
         });
     } catch (err) {
@@ -132,7 +131,7 @@ async function register(req, res) {
  * @returns Promise
  */
 async function login(req, res) {
-    const { phoneNumber, password } = req.body;
+    const { phoneNumber, password, expiresTime } = req.body;
     // 检查是否提供了手机号和密码
     if (!phoneNumber || !password) {
         return res.status(400).json({
@@ -169,7 +168,7 @@ async function login(req, res) {
         }
 
         // 生成jwt token
-        const token = await jwtCreate(user.phoneNumber, user.role);
+        const token = await jwtCreate({ phoneNumber: user.phoneNumber, role: user.role }, expiresTime);
 
         // 创建一个普通的JavaScript对象，并从中删除字段
         const userObject = user.toObject();
@@ -265,7 +264,8 @@ async function updateUserInfo(req, res) {
         password, // 非必传
         role, // 非必传
         gid, // 非必传
-        use // 非必传
+        use, // 非必传
+        bindInfo // 非必传
     } = req.body;
 
     // 更新条件，筛选出哪一条数据
@@ -288,6 +288,7 @@ async function updateUserInfo(req, res) {
     var newRole;
     var newGid;
     var newUse;
+    var newBindInfo;
 
     if (req.auth && req.auth.role === 'admin') {
         if (role) {
@@ -313,6 +314,10 @@ async function updateUserInfo(req, res) {
         if (gid) {
             newGid = gid;
         }
+
+        if (bindInfo.length > 0) {
+            newBindInfo = bindInfo;
+        }
     }
 
     if (password) {
@@ -336,7 +341,8 @@ async function updateUserInfo(req, res) {
             password: hashPassword,
             role: newRole,
             gid: newGid,
-            use: newUse
+            use: newUse,
+            bindInfo: newBindInfo
         },
     };
 
@@ -345,6 +351,7 @@ async function updateUserInfo(req, res) {
     await user.save();
     const userObject = user.toObject();
     delete userObject._id;
+
 
     return res.status(200).json({
         statusCode: statusCode.success,
@@ -418,7 +425,6 @@ async function getUnderlingUser(req, res) {
     const user = await UserInfo.findOne({ phoneNumber: req.auth.phoneNumber }).select({ password: 0, _id: 0, __v: 0 });
     // 查询具有相同gid的用户数据
     const usersWithSameGid = await UserInfo.find({ gid: user.gid }).select({ password: 0, _id: 0, __v: 0 });
-    console.log(usersWithSameGid);
 
     return res.status(200).json({
         statusCode: statusCode.success,

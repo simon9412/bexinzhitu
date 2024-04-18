@@ -3,23 +3,26 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const { CATEGORY } = require('../common/enum');
 
 // 子表 ShuiSchema
-const ShuiSchema = new mongoose.Schema({
-    goodName: { type: String, required: true }, // 商品名称
-    brandName: { type: String, required: true }, // 品牌名称
-    property: { type: String, required: true }, // 商品属性、规格
-    unit: { type: String, required: true }, // 商品单位
-    inventory: { type: Number, default: 0 }, // 库存
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
-});
+const ShuiSchema = new mongoose.Schema(
+    {
+        goodName: { type: String, required: true }, // 商品名称
+        brandName: { type: String, required: true }, // 品牌名称
+        property: { type: String, required: true }, // 商品属性、规格
+        unit: { type: String, required: true }, // 商品单位
+        description: { type: String }, // 商品描述
+        image: { type: String }, // 商品图片 url
+        originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+        inventory: {
+            type: Number,
+            validate: {
+                validator: Number.isInteger,
+                message: '{VALUE} is not an integer value'
+            },
+            min: 0,
+            default: 0
+        } // 库存
+    }
+);
 
 // 子表 DianSchema
 const DianSchema = new mongoose.Schema({
@@ -27,6 +30,8 @@ const DianSchema = new mongoose.Schema({
     brandName: { type: String, required: true }, // 品牌名称
     property: { type: String, required: true }, // 商品属性、规格
     unit: { type: String, required: true }, // 商品单位
+    description: { type: String }, // 商品描述
+    image: { type: String }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -45,7 +50,8 @@ const MuSchema = new mongoose.Schema({
     brandName: { type: String, required: true }, // 品牌名称
     property: { type: String, required: true }, // 商品属性、规格
     unit: { type: String, required: true }, // 商品单位
-    inventory: { type: Number, default: 0 }, // 库存
+    description: { type: String }, // 商品描述
+    image: { type: String }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -64,7 +70,8 @@ const NiSchema = new mongoose.Schema({
     brandName: { type: String, required: true }, // 品牌名称
     property: { type: String, required: true }, // 商品属性、规格
     unit: { type: String, required: true }, // 商品单位
-    inventory: { type: Number, default: 0 }, // 库存
+    description: { type: String }, // 商品描述
+    image: { type: String }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -83,7 +90,8 @@ const YouSchema = new mongoose.Schema({
     brandName: { type: String, required: true }, // 品牌名称
     property: { type: String, required: true }, // 商品属性、规格
     unit: { type: String, required: true }, // 商品单位
-    inventory: { type: Number, default: 0 }, // 库存
+    description: { type: String }, // 商品描述
+    image: { type: String }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -102,7 +110,8 @@ const OtherSchema = new mongoose.Schema({
     brandName: { type: String, required: true }, // 品牌名称
     property: { type: String, required: true }, // 商品属性、规格
     unit: { type: String, required: true }, // 商品单位
-    inventory: { type: Number, default: 0 }, // 库存
+    description: { type: String }, // 商品描述
+    image: { type: String }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -116,11 +125,16 @@ const OtherSchema = new mongoose.Schema({
 });
 
 // 总表 SkuSchema
-const SkuSchema = new mongoose.Schema({
-    goodId: { type: Number, unique: true, default: 10000 },
-    category: { type: String, required: true, enum: CATEGORY },
-    goodInfo: { type: mongoose.Schema.Types.ObjectId, refPath: 'category' }
-});
+const SkuSchema = new mongoose.Schema(
+    {
+        goodId: { type: Number, unique: true },
+        category: { type: String, required: true, enum: CATEGORY },
+        goodInfo: { type: mongoose.Schema.Types.ObjectId, refPath: 'category' }
+    },
+    {
+        timestamps: true
+    }
+);
 
 SkuSchema.plugin(AutoIncrement, { inc_field: 'goodId', start_seq: 10000 });
 
