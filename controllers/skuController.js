@@ -72,7 +72,7 @@ async function getSkuListByCategory(req, res) {
             .skip(skipCount)
             .limit(pageSize)
             .select({ _id: 0, __v: 0 })
-            .exec();;
+            .exec();
 
         return res.status(200).json({
             statusCode: statusCode.success,
@@ -157,6 +157,7 @@ async function addSku(req, res) {
         await Promise.all(skuInfo.map(async ({
             category,
             goodName,
+            specification,
             property,
             unit,
             brandName,
@@ -174,6 +175,7 @@ async function addSku(req, res) {
             // 创建商品对象并保存到对应的子表中
             const goodInfo = new Model({
                 goodName,
+                specification,
                 property,
                 unit,
                 brandName,
@@ -191,6 +193,7 @@ async function addSku(req, res) {
                 goodId: sku.goodId,
                 category: sku.category,
                 goodName: goodInfo.goodName,
+                specification: goodInfo.specification,
                 property: goodInfo.property,
                 unit: goodInfo.unit,
                 brandName: goodInfo.brandName,
@@ -222,6 +225,7 @@ async function addSku(req, res) {
  * @param {string} skuInfo[].goodId - *商品id
  * @param {string} skuInfo[].category - *商品分类，搜索CATEGORY可查
  * @param {string} skuInfo[].goodName - *商品名称
+ * @param {string} skuInfo[].specification - *商品属性
  * @param {string} skuInfo[].property - *商品属性
  * @param {string} skuInfo[].unit - *商品单位
  * @param {string} skuInfo[].brandName - *商品品牌名称
@@ -264,6 +268,7 @@ async function updateSku(req, res) {
             const newInfo = {
                 goodName: sku.goodName ? sku.goodName : existingProduct.goodName,
                 brandName: sku.brandName ? sku.brandName : existingProduct.brandName,
+                specification: sku.specification ? sku.specification : existingProduct.specification,
                 property: sku.property ? sku.property : existingProduct.property,
                 unit: sku.unit ? sku.unit : existingProduct.unit,
                 inventory: sku.inventory ? sku.inventory : existingProduct.inventory,
@@ -442,6 +447,7 @@ async function searchSku(req, res) {
                     goodInfo: {
                         goodName: '$skuInfo.goodName',
                         brandName: '$skuInfo.brandName',
+                        specification: '$skuInfo.specification',
                         property: '$skuInfo.property',
                         unit: '$skuInfo.unit',
                         originalPrice: '$skuInfo.originalPrice',

@@ -13,6 +13,7 @@ var usersRouter = require('./routes/userRoutes');
 var skuRouter = require('./routes/skuRoutes');
 var cartRouter = require('./routes/cartRoutes');
 var wxusersRouer = require('./routes/wxuserRoutes');
+var addressRouer = require('./routes/addressRoutes');
 
 
 
@@ -40,6 +41,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/sku', skuRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/wxusers', wxusersRouer);
+app.use('/api/address', addressRouer);
 
 
 

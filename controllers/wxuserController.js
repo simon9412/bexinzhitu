@@ -151,7 +151,6 @@ async function updateUserInfo(req, res) {
     }
 }
 
-
 /**
  * @description 管理员查询所有微信用户列表
  * @method GET

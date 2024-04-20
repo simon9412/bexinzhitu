@@ -3,35 +3,35 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const { CATEGORY } = require('../common/enum');
 
 // 子表 ShuiSchema
-const ShuiSchema = new mongoose.Schema(
-    {
-        goodName: { type: String, required: true }, // 商品名称
-        brandName: { type: String, required: true }, // 品牌名称
-        property: { type: String, required: true }, // 商品属性、规格
-        unit: { type: String, required: true }, // 商品单位
-        description: { type: String }, // 商品描述
-        image: { type: String }, // 商品图片 url
-        originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
-        inventory: {
-            type: Number,
-            validate: {
-                validator: Number.isInteger,
-                message: '{VALUE} is not an integer value'
-            },
-            min: 0,
-            default: 0
-        } // 库存
-    }
-);
+const ShuiSchema = new mongoose.Schema({
+    goodName: { type: String, required: true }, // 商品名称
+    brandName: { type: String, required: true }, // 品牌名称
+    specification: { type: String, default: '' }, // 商品规格
+    property: { type: String, default: '' }, // 商品属性
+    unit: { type: String, default: '' }, // 商品单位
+    description: { type: String, default: '' }, // 商品描述
+    image: { type: String, default: '' }, // 商品图片 url
+    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    inventory: {
+        type: Number,
+        validate: {
+            validator: Number.isInteger,
+            message: '{VALUE} is not an integer value'
+        },
+        min: 0,
+        default: 0
+    } // 库存
+});
 
 // 子表 DianSchema
 const DianSchema = new mongoose.Schema({
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
-    property: { type: String, required: true }, // 商品属性、规格
-    unit: { type: String, required: true }, // 商品单位
-    description: { type: String }, // 商品描述
-    image: { type: String }, // 商品图片 url
+    specification: { type: String, default: '' }, // 商品规格
+    property: { type: String, default: '' }, // 商品属性
+    unit: { type: String, default: '' }, // 商品单位
+    description: { type: String, default: '' }, // 商品描述
+    image: { type: String, default: '' }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -48,10 +48,11 @@ const DianSchema = new mongoose.Schema({
 const MuSchema = new mongoose.Schema({
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
-    property: { type: String, required: true }, // 商品属性、规格
-    unit: { type: String, required: true }, // 商品单位
-    description: { type: String }, // 商品描述
-    image: { type: String }, // 商品图片 url
+    specification: { type: String, default: '' }, // 商品规格
+    property: { type: String, default: '' }, // 商品属性
+    unit: { type: String, default: '' }, // 商品单位
+    description: { type: String, default: '' }, // 商品描述
+    image: { type: String, default: '' }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -68,10 +69,11 @@ const MuSchema = new mongoose.Schema({
 const NiSchema = new mongoose.Schema({
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
-    property: { type: String, required: true }, // 商品属性、规格
-    unit: { type: String, required: true }, // 商品单位
-    description: { type: String }, // 商品描述
-    image: { type: String }, // 商品图片 url
+    specification: { type: String, default: '' }, // 商品规格
+    property: { type: String, default: '' }, // 商品属性
+    unit: { type: String, default: '' }, // 商品单位
+    description: { type: String, default: '' }, // 商品描述
+    image: { type: String, default: '' }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -88,10 +90,11 @@ const NiSchema = new mongoose.Schema({
 const YouSchema = new mongoose.Schema({
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
-    property: { type: String, required: true }, // 商品属性、规格
-    unit: { type: String, required: true }, // 商品单位
-    description: { type: String }, // 商品描述
-    image: { type: String }, // 商品图片 url
+    specification: { type: String, default: '' }, // 商品规格
+    property: { type: String, default: '' }, // 商品属性
+    unit: { type: String, default: '' }, // 商品单位
+    description: { type: String, default: '' }, // 商品描述
+    image: { type: String, default: '' }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
@@ -108,10 +111,11 @@ const YouSchema = new mongoose.Schema({
 const OtherSchema = new mongoose.Schema({
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
-    property: { type: String, required: true }, // 商品属性、规格
-    unit: { type: String, required: true }, // 商品单位
-    description: { type: String }, // 商品描述
-    image: { type: String }, // 商品图片 url
+    specification: { type: String, default: '' }, // 商品规格
+    property: { type: String, default: '' }, // 商品属性
+    unit: { type: String, default: '' }, // 商品单位
+    description: { type: String, default: '' }, // 商品描述
+    image: { type: String, default: '' }, // 商品图片 url
     originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
