@@ -12,8 +12,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var skuRouter = require('./routes/skuRoutes');
 var cartRouter = require('./routes/cartRoutes');
-var wxusersRouer = require('./routes/wxuserRoutes');
-var addressRouer = require('./routes/addressRoutes');
+var wxusersRouter = require('./routes/wxuserRoutes');
+var addressRouter = require('./routes/addressRoutes');
+var orderRouter = require('./routes/orderRoutes');
 
 
 
@@ -40,8 +41,9 @@ app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/sku', skuRouter);
 app.use('/api/cart', cartRouter);
-app.use('/api/wxusers', wxusersRouer);
-app.use('/api/address', addressRouer);
+app.use('/api/wxusers', wxusersRouter);
+app.use('/api/address', addressRouter);
+app.use('/api/order', orderRouter);
 
 
 

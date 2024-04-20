@@ -24,7 +24,7 @@ const AddressSchema = new mongoose.Schema(
     }
 );
 
-// 创建购物车模型
+// 创建收货地址模型
 const Address = mongoose.model('Address', AddressSchema);
 
 module.exports = Address;

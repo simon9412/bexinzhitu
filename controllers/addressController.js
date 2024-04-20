@@ -1,6 +1,5 @@
 const Address = require('../models/address');
 const Wxuser = require('../models/wxuser');
-const { Sku } = require('../models/sku');
 const statusCode = require('../common/statusCode');
 
 

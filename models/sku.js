@@ -11,7 +11,7 @@ const ShuiSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
         validate: {
@@ -32,7 +32,7 @@ const DianSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
         validate: {
@@ -53,7 +53,7 @@ const MuSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
         validate: {
@@ -74,7 +74,7 @@ const NiSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
         validate: {
@@ -95,7 +95,7 @@ const YouSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
         validate: {
@@ -116,7 +116,7 @@ const OtherSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: mongoose.Schema.Types.Decimal128, min: 0.01, default: 999.99 }, // 商品原价
+    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
     inventory: {
         type: Number,
         validate: {

@@ -2,7 +2,6 @@ const CartItem = require('../models/cart');
 const Wxuser = require('../models/wxuser');
 const { Sku } = require('../models/sku');
 const statusCode = require('../common/statusCode');
-const { dPrice } = require('../common/decodePrice');
 
 /**
  * @description 添加购物车和继续新增或者减少
@@ -109,7 +108,7 @@ async function getCartList(req, res) {
                     image: goodInfo.goodInfo.image,
                     description: goodInfo.goodInfo.description,
                     inventory: goodInfo.goodInfo.inventory,
-                    originalPrice: dPrice(goodInfo.goodInfo.originalPrice)
+                    originalPrice: goodInfo.goodInfo.originalPrice
                 }
             };
         }));

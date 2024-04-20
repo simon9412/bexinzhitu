@@ -11,9 +11,9 @@ const WxuserSchema = new mongoose.Schema(
         level: { type: Number, default: 1 }, // 账号级别，后续可能会用到
         bind: { type: Number, default: 0 }, // 绑定后台用户userinfo表中的uid，新登录的用户无法绑定，需要后面手动绑定
         use: { type: String, default: 'normal' }, // 使用状态
-        balance: { type: mongoose.Schema.Types.Decimal128, min: 0, default: 0 }, // 账号余额
+        balance: { type: Number, min: 0, default: 0 }, // 账号余额
         cartInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'CartItem', }, // 购物车信息
-        orderInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'openId' }, // 订单信息
+        orderInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' }, // 订单信息
         addressInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' }, // 收货地址信息
         couponInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'openId' }, // 优惠券信息
     },
