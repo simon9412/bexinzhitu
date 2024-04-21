@@ -4,6 +4,7 @@ const { CATEGORY } = require('../common/enum');
 
 // 子表 ShuiSchema
 const ShuiSchema = new mongoose.Schema({
+    secCategory: { type: String, required: true }, // 子类
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
     specification: { type: String, default: '' }, // 商品规格
@@ -11,7 +12,22 @@ const ShuiSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
+    originalPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            price: {
+                type: Number, min: 0.01, default: 999.99
+            }
+        }],
+        required: true
+    }, // 商品原价
+    costPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            costPrice: { type: Number, min: 0.01, default: 999.99 }
+        }],
+        required: true
+    }, // 成本价
     inventory: {
         type: Number,
         validate: {
@@ -25,6 +41,7 @@ const ShuiSchema = new mongoose.Schema({
 
 // 子表 DianSchema
 const DianSchema = new mongoose.Schema({
+    secCategory: { type: String, required: true }, // 子类
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
     specification: { type: String, default: '' }, // 商品规格
@@ -32,7 +49,22 @@ const DianSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
+    originalPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            price: {
+                type: Number, min: 0.01, default: 999.99
+            }
+        }],
+        required: true
+    }, // 商品原价
+    costPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            costPrice: { type: Number, min: 0.01, default: 999.99 }
+        }],
+        required: true
+    }, // 成本价
     inventory: {
         type: Number,
         validate: {
@@ -46,6 +78,7 @@ const DianSchema = new mongoose.Schema({
 
 // 子表 MuSchema
 const MuSchema = new mongoose.Schema({
+    secCategory: { type: String, required: true }, // 子类
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
     specification: { type: String, default: '' }, // 商品规格
@@ -53,7 +86,22 @@ const MuSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
+    originalPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            price: {
+                type: Number, min: 0.01, default: 999.99
+            }
+        }],
+        required: true
+    }, // 商品原价
+    costPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            costPrice: { type: Number, min: 0.01, default: 999.99 }
+        }],
+        required: true
+    }, // 成本价
     inventory: {
         type: Number,
         validate: {
@@ -67,6 +115,7 @@ const MuSchema = new mongoose.Schema({
 
 // 子表 NiSchema
 const NiSchema = new mongoose.Schema({
+    secCategory: { type: String, required: true }, // 子类
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
     specification: { type: String, default: '' }, // 商品规格
@@ -74,7 +123,22 @@ const NiSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
+    originalPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            price: {
+                type: Number, min: 0.01, default: 999.99
+            }
+        }],
+        required: true
+    }, // 商品原价
+    costPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            costPrice: { type: Number, min: 0.01, default: 999.99 }
+        }],
+        required: true
+    }, // 成本价
     inventory: {
         type: Number,
         validate: {
@@ -88,6 +152,7 @@ const NiSchema = new mongoose.Schema({
 
 // 子表 YouSchema
 const YouSchema = new mongoose.Schema({
+    secCategory: { type: String, required: true }, // 子类
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
     specification: { type: String, default: '' }, // 商品规格
@@ -95,7 +160,22 @@ const YouSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
+    originalPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            price: {
+                type: Number, min: 0.01, default: 999.99
+            }
+        }],
+        required: true
+    }, // 商品原价
+    costPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            costPrice: { type: Number, min: 0.01, default: 999.99 }
+        }],
+        required: true
+    }, // 成本价
     inventory: {
         type: Number,
         validate: {
@@ -109,6 +189,7 @@ const YouSchema = new mongoose.Schema({
 
 // 子表 OtherSchema
 const OtherSchema = new mongoose.Schema({
+    secCategory: { type: String, required: true }, // 子类
     goodName: { type: String, required: true }, // 商品名称
     brandName: { type: String, required: true }, // 品牌名称
     specification: { type: String, default: '' }, // 商品规格
@@ -116,7 +197,22 @@ const OtherSchema = new mongoose.Schema({
     unit: { type: String, default: '' }, // 商品单位
     description: { type: String, default: '' }, // 商品描述
     image: { type: String, default: '' }, // 商品图片 url
-    originalPrice: { type: Number, min: 0.01, default: 999.99 }, // 商品原价
+    originalPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            price: {
+                type: Number, min: 0.01, default: 999.99
+            }
+        }],
+        required: true
+    }, // 商品原价
+    costPriceList: {
+        type: [{
+            floor: { type: String, default: '1' },
+            costPrice: { type: Number, min: 0.01, default: 999.99 }
+        }],
+        required: true
+    }, // 成本价
     inventory: {
         type: Number,
         validate: {
@@ -131,9 +227,9 @@ const OtherSchema = new mongoose.Schema({
 // 总表 SkuSchema
 const SkuSchema = new mongoose.Schema(
     {
-        goodId: { type: Number, unique: true },
-        category: { type: String, required: true, enum: CATEGORY },
-        goodInfo: { type: mongoose.Schema.Types.ObjectId, refPath: 'category' }
+        goodId: { type: Number, unique: true }, // 商品id
+        category: { type: String, required: true, enum: CATEGORY }, // 商品分类
+        goodInfo: { type: mongoose.Schema.Types.ObjectId, refPath: 'category' } // 商品详情
     },
     {
         timestamps: true

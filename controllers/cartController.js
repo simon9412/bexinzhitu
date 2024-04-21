@@ -95,6 +95,16 @@ async function getCartList(req, res) {
                 .populate({ path: 'goodInfo', select: { _id: 0, __v: 0 } })
                 .select({ _id: 0, __v: 0 });
 
+            // 如果商品被删除，返回商品已下架
+            if (!goodInfo) {
+                return {
+                    goodId: item.goodId,
+                    quantity: item.quantity,
+                    isChecked: item.isChecked,
+                    goodInfo: '商品已下架'
+                }
+            }
+
             return {
                 goodId: item.goodId,
                 quantity: item.quantity,
@@ -108,7 +118,7 @@ async function getCartList(req, res) {
                     image: goodInfo.goodInfo.image,
                     description: goodInfo.goodInfo.description,
                     inventory: goodInfo.goodInfo.inventory,
-                    originalPrice: goodInfo.goodInfo.originalPrice
+                    originalPriceList: goodInfo.goodInfo.originalPriceList
                 }
             };
         }));
@@ -119,6 +129,7 @@ async function getCartList(req, res) {
             data: newData
         });
     } catch (error) {
+        // console.log(error);
         return res.status(500).json({
             statusCode: statusCode.serverErr,
             msg: '服务器异常，请稍后重试'
@@ -182,8 +193,8 @@ async function updateChecked(req, res) {
             .exec();
 
         const updatedCartList = data.cartInfo.cartList.map(itemOld => {
+            // 找到需要改的gooid
             const itemToUpdate = cartList.find(item => item.goodId === itemOld.goodId);
-            console.log(itemToUpdate);
             if (itemToUpdate) {
                 itemOld.isChecked = itemToUpdate.isChecked;
             }

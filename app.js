@@ -15,6 +15,9 @@ var cartRouter = require('./routes/cartRoutes');
 var wxusersRouter = require('./routes/wxuserRoutes');
 var addressRouter = require('./routes/addressRoutes');
 var orderRouter = require('./routes/orderRoutes');
+var couponRouter = require('./routes/couponRoutes');
+var adminRouter = require('./routes/adminRoutes');
+
 
 
 
@@ -44,6 +47,8 @@ app.use('/api/cart', cartRouter);
 app.use('/api/wxusers', wxusersRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
+app.use('/api/coupon', couponRouter);
+app.use('/api/admin', adminRouter);
 
 
 

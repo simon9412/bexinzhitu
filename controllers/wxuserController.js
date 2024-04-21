@@ -24,8 +24,7 @@ async function wxLogin(req, res) {
                 grant_type: 'authorization_code'
             }
         });
-        console.log("code:", code);
-        console.log("response.data:", response.data);
+
         if (response.data.errcode) {
             return res.status(400).json({
                 statusCode: statusCode.paramErr,
@@ -161,7 +160,12 @@ async function updateUserInfo(req, res) {
  */
 async function getWxUserList(req, res) {
     try {
-        const wxUserList = await Wxuser.find().select({ _id: 0, __v: 0 });
+        const wxUserList = await Wxuser.find()
+            .populate({ path: 'cartInfo', select: { __v: 0 } })
+            .populate({ path: 'orderInfo', select: { __v: 0 } })
+            .populate({ path: 'addressInfo', select: { __v: 0 } })
+            .populate({ path: 'couponInfo', select: { __v: 0 } })
+            .select({ _id: 0, __v: 0 });
         return res.status(200).json({
             statusCode: statusCode.success,
             msg: 'success',

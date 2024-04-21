@@ -4,9 +4,9 @@ const ALLOWED_ROLES = ['admin', 'group', 'user'];
 // 账号使用状态
 const ALLOWED_USE = ['normal', 'banned'];
 // 商品分类
-const CATEGORY = ['Dian', 'Mu', 'Shui', 'Ni', 'You', 'Other'];
+const CATEGORY = ['Shui', 'Dian', 'Mu', 'Ni', 'You', 'Other'];
 // 品牌列表
-const BRAND_LIST = [];
+const BRAND_LIST = []; // 等待配置
 
 
 

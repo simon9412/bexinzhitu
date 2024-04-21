@@ -15,7 +15,7 @@ const WxuserSchema = new mongoose.Schema(
         cartInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'CartItem', }, // 购物车信息
         orderInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' }, // 订单信息
         addressInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' }, // 收货地址信息
-        couponInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'openId' }, // 优惠券信息
+        couponInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'Coupon' } // 优惠券信息
     },
     {
         timestamps: true

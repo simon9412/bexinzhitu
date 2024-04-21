@@ -2,11 +2,11 @@
   "name": "bexinzhitu",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./bin/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "fdev": "pm2 start index.js"
+    "start": "node ./bin/index.js",
+    "dev": "nodemon ./bin/index.js",
+    "fdev": "pm2 start ./bin/index.js"
   },
   "keywords": [],
   "author": "",

@@ -22,8 +22,6 @@ function jwtVerify() {
     }).unless({
         path: [
             '/api',
-            // /^\/api\/wxusers\/\w+/,
-            // '/api/users/register',
             '/api/users/login',
             '/api/users/getUserInfo',
             {
