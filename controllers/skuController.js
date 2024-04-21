@@ -505,13 +505,29 @@ async function searchSku(req, res) {
 
         const results = await Sku.aggregate(pipeline);
 
+        // 去除重复项，名称和品牌完全一致时只展示一个
+        const uniqueResults = results.reduce((accumulator, currentValue) => {
+            // 检查当前元素是否已经存在于累加器中
+            const existingItem = accumulator.find(item =>
+                item.goodInfo.goodName === currentValue.goodInfo.goodName
+                && item.goodInfo.brandName === currentValue.goodInfo.brandName
+            );
+
+            // 如果不存在，则将当前元素添加到累加器中
+            if (!existingItem) {
+                accumulator.push(currentValue);
+            }
+
+            return accumulator;
+        }, []);
+
         return res.status(200).json({
             statusCode: statusCode.success,
             msg: '查询成功',
-            data: [{ skuInfo: results }]
+            data: [{ skuInfo: uniqueResults }]
         });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({
             statusCode: statusCode.serverErr,
             msg: '服务器异常，查询商品信息失败'

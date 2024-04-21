@@ -251,7 +251,7 @@ async function getMostFavorableCoupon(req, res) {
             data: [mostFavorableCoupon[0]]
         });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({
             statusCode: statusCode.serverErr,
             msg: '服务器异常，请稍后重试'

@@ -10,7 +10,8 @@ async function comparePassword(plainPassword, hashedPassword) {
         const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
         return isMatch;
     } catch (err) {
-        console.log(err);
+        // console.log(err);
+        return err;
     }
 };
 

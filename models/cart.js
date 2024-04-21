@@ -5,8 +5,9 @@ const cartItemSchema = new mongoose.Schema(
     {
         cartList: [
             {
-                goodId: { type: Number, required: true },
+                goodId: { type: Number, required: true }, // 商品id
                 quantity: { type: Number, default: 1 }, // 商品数量
+                floor: { type: String, default: '1' }, // 楼层选择
                 isChecked: { type: Boolean, required: true, default: true }, // 选中状态
             }
         ]

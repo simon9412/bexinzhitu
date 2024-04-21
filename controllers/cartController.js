@@ -11,7 +11,7 @@ const statusCode = require('../common/statusCode');
  * @returns Promise
  */
 async function addCart(req, res) {
-    var { goodId, quantity } = req.body;
+    var { goodId, quantity, floor } = req.body;
 
     try {
         var data;
@@ -29,7 +29,7 @@ async function addCart(req, res) {
 
         // 如果存在cartInfo
         if (currentUser.cartInfo && currentUser.cartInfo.cartList) {
-            const existingCartItem = currentUser.cartInfo.cartList.find(item => item.goodId === goodId);
+            const existingCartItem = currentUser.cartInfo.cartList.find(item => item.goodId === goodId && item.floor === floor);
             // 如果已添加过购物车
             if (existingCartItem) {
                 // 如果购物车已存在相同商品，则更新数量
@@ -45,7 +45,10 @@ async function addCart(req, res) {
                 if (quantity > goodInfo.goodInfo.inventory) {
                     quantity = goodInfo.goodInfo.inventory
                 }
-                currentUser.cartInfo.cartList.push({ goodId, quantity, isChecked: true });
+                if (quantity < 1) {
+                    quantity = 1
+                }
+                currentUser.cartInfo.cartList.push({ goodId, quantity, floor, isChecked: true });
             }
             data = await CartItem.findOneAndUpdate(
                 { _id: currentUser.cartInfo._id },
@@ -60,7 +63,7 @@ async function addCart(req, res) {
             if (quantity > goodInfo.goodInfo.inventory) {
                 quantity = goodInfo.goodInfo.inventory
             }
-            data = await CartItem.create({ cartList: [{ goodId, quantity }] });
+            data = await CartItem.create({ cartList: [{ goodId, quantity, floor }] });
 
             await Wxuser.updateOne({ openId: req.auth.openid }, { $set: { cartInfo: data._id } });
         }
@@ -100,6 +103,7 @@ async function getCartList(req, res) {
                 return {
                     goodId: item.goodId,
                     quantity: item.quantity,
+                    floor: item.floor,
                     isChecked: item.isChecked,
                     goodInfo: '商品已下架'
                 }
@@ -108,6 +112,7 @@ async function getCartList(req, res) {
             return {
                 goodId: item.goodId,
                 quantity: item.quantity,
+                floor: item.floor,
                 isChecked: item.isChecked,
                 goodInfo: {
                     goodName: goodInfo.goodInfo.goodName,
@@ -118,7 +123,7 @@ async function getCartList(req, res) {
                     image: goodInfo.goodInfo.image,
                     description: goodInfo.goodInfo.description,
                     inventory: goodInfo.goodInfo.inventory,
-                    originalPriceList: goodInfo.goodInfo.originalPriceList
+                    originalPriceList: goodInfo.goodInfo.originalPriceList.find(fitem => fitem.floor === item.floor)
                 }
             };
         }));
@@ -194,7 +199,7 @@ async function updateChecked(req, res) {
 
         const updatedCartList = data.cartInfo.cartList.map(itemOld => {
             // 找到需要改的gooid
-            const itemToUpdate = cartList.find(item => item.goodId === itemOld.goodId);
+            const itemToUpdate = cartList.find(item => item.goodId === itemOld.goodId && item.floor === itemOld.floor);
             if (itemToUpdate) {
                 itemOld.isChecked = itemToUpdate.isChecked;
             }

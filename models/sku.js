@@ -238,19 +238,6 @@ const SkuSchema = new mongoose.Schema(
 
 SkuSchema.plugin(AutoIncrement, { inc_field: 'goodId', start_seq: 10000 });
 
-// // 在保存 Sku 文档之后，更新对应的子表数据 没用上
-// SkuSchema.post('save', async function (doc) {
-//     console.log(doc.data, "1dataaaa")
-
-//     const Model = mongoose.model(doc.category);
-//     if (doc.data && !await Model.findOne({ _id: doc.data })) {
-//         // 如果子表中不存在对应的文档，则创建新文档
-//         const data = new Model({ _id: doc.data });
-//         console.log(data, "dataaaa")
-//         await data.save();
-//     }
-// });
-
 const Shui = mongoose.model('Shui', ShuiSchema);
 const Dian = mongoose.model('Dian', DianSchema);
 const Mu = mongoose.model('Mu', MuSchema);

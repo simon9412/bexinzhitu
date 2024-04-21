@@ -37,7 +37,7 @@ async function wxLogin(req, res) {
         // 生成token
         const token = await jwtCreate({ openid, session_key }, expiresTime);
 
-        console.log(token);
+        // console.log(token);
         const existingUser = await Wxuser.findOne({ openId: openid }).select({ _id: 0, __v: 0 });
 
         // 如果存在，直接返回查到的信息
