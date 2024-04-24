@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/index.js",
     "dev": "nodemon ./bin/index.js",
-    "fdev": "pm2 start ./bin/index.js"
+    "server": "pm2 start ./bin/index.js"
   },
   "keywords": [],
   "author": "",
