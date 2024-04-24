@@ -35,15 +35,15 @@ async function addCart(req, res) {
                 // 如果购物车已存在相同商品，则更新数量
                 existingCartItem.quantity += quantity;
 
-                // 如果更新后的数量大于库存，就改成库存数
-                if (existingCartItem.quantity > goodInfo.goodInfo.inventory) {
-                    existingCartItem.quantity = goodInfo.goodInfo.inventory;
+                // 如果更新后的数量大于库存，就改成库存数，就改成999 ，不做库存了，后面要再把999改成goodInfo.goodInfo.inventory
+                if (existingCartItem.quantity > 999) {
+                    existingCartItem.quantity = 999;
                 }
             } else {
                 // 否则，将新商品添加到购物车
-                // 如果更新后的数量大于库存，就改成库存数
-                if (quantity > goodInfo.goodInfo.inventory) {
-                    quantity = goodInfo.goodInfo.inventory
+                // 如果更新后的数量大于库存，就改成999 ，不做库存了goodInfo.goodInfo.inventory
+                if (quantity > 999) {
+                    quantity = 999
                 }
                 if (quantity < 1) {
                     quantity = 1
@@ -60,9 +60,10 @@ async function addCart(req, res) {
             ).select({ _id: 0, __v: 0 });
 
         } else {
-            if (quantity > goodInfo.goodInfo.inventory) {
-                quantity = goodInfo.goodInfo.inventory
-            }
+            // 库存判断
+            // if (quantity > goodInfo.goodInfo.inventory) {
+            //     quantity = goodInfo.goodInfo.inventory
+            // }
             data = await CartItem.create({ cartList: [{ goodId, quantity, floor }] });
 
             await Wxuser.updateOne({ openId: req.auth.openid }, { $set: { cartInfo: data._id } });
@@ -92,6 +93,13 @@ async function getCartList(req, res) {
             .populate({ path: 'cartInfo', select: { _id: 0, __v: 0 } })
             .select({ _id: 0, __v: 0 })
             .exec();
+        if (!data || !data.cartInfo) {
+            return res.status(200).json({
+                statusCode: statusCode.success,
+                msg: '购物车为空',
+                data: []
+            });
+        }
 
         const newData = await Promise.all(data.cartInfo.cartList.map(async (item) => {
             const goodInfo = await Sku.findOne({ goodId: item.goodId })
@@ -122,7 +130,7 @@ async function getCartList(req, res) {
                     unit: goodInfo.goodInfo.unit,
                     image: goodInfo.goodInfo.image,
                     description: goodInfo.goodInfo.description,
-                    inventory: goodInfo.goodInfo.inventory,
+                    // inventory: goodInfo.goodInfo.inventory,
                     originalPriceList: goodInfo.goodInfo.originalPriceList.find(fitem => fitem.floor === item.floor)
                 }
             };

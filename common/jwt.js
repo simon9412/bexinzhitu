@@ -28,7 +28,8 @@ function jwtVerify() {
                 url: /^\/api\/sku\/\w+/,
                 methods: ['GET']
             },
-            '/api/wxusers/wxLogin'
+            '/api/wxusers/wxLogin',
+            'api/pay/getNotify'
         ]
     })
 };

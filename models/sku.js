@@ -28,15 +28,7 @@ const ShuiSchema = new mongoose.Schema({
         }],
         required: true
     }, // 成本价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
+    inventory: { type: Number, min: 0, default: 10000 } // 库存
 });
 
 // 子表 DianSchema
@@ -65,15 +57,7 @@ const DianSchema = new mongoose.Schema({
         }],
         required: true
     }, // 成本价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
+    inventory: { type: Number, min: 0, default: 10000 } // 库存
 });
 
 // 子表 MuSchema
@@ -102,15 +86,7 @@ const MuSchema = new mongoose.Schema({
         }],
         required: true
     }, // 成本价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
+    inventory: { type: Number, min: 0, default: 10000 } // 库存
 });
 
 // 子表 NiSchema
@@ -139,15 +115,7 @@ const NiSchema = new mongoose.Schema({
         }],
         required: true
     }, // 成本价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
+    inventory: { type: Number, min: 0, default: 10000 } // 库存
 });
 
 // 子表 YouSchema
@@ -176,15 +144,7 @@ const YouSchema = new mongoose.Schema({
         }],
         required: true
     }, // 成本价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
+    inventory: { type: Number, min: 0, default: 10000 } // 库存
 });
 
 // 子表 OtherSchema
@@ -213,15 +173,7 @@ const OtherSchema = new mongoose.Schema({
         }],
         required: true
     }, // 成本价
-    inventory: {
-        type: Number,
-        validate: {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        },
-        min: 0,
-        default: 0
-    } // 库存
+    inventory: { type: Number, min: 0, default: 10000 } // 库存
 });
 
 // 总表 SkuSchema

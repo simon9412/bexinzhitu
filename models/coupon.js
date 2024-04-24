@@ -18,7 +18,7 @@ const CouponSchema = new mongoose.Schema(
     }
 );
 
-// 创建订单模型
+// 创建模型
 const Coupon = mongoose.model('Coupon', CouponSchema);
 
 module.exports = Coupon;

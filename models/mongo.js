@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 // MongoDB 连接 URL
-const url = 'mongodb://admin:w123456@54.222.184.73:27017/xinzhitu'; // mongodb://用户名:密码@host:端口号/当前使用的数据库名
+// const url = 'mongodb://admin:w123456@54.222.184.73:27017/xinzhitu'; // mongodb://用户名:密码@host:端口号/当前使用的数据库名
+
+const url = 'mongodb://admin:wzg19941112@43.198.155.169:27017/xinzhitu'; // mongodb://用户名:密码@host:端口号/当前使用的数据库名
+
 
 // Mongoose 连接选项
 // const options = {

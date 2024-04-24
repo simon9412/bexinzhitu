@@ -4,7 +4,10 @@ const userController = require('../controllers/userController');
 const wxuserController = require('../controllers/wxuserController');
 const skuController = require('../controllers/skuController');
 const couponController = require('../controllers/couponController');
-const { checkAdminPermission } = require('../common/jwt');
+const orderController = require('../controllers/orderController');
+const discountController = require('../controllers/discountController');
+
+const { checkAdminPermission, checkGroupPermission } = require('../common/jwt');
 
 /**
  * 后台员工管理
@@ -42,6 +45,10 @@ router.post('/deleteSku', checkAdminPermission, skuController.deleteSku);
 // 管理员查询的商品列表包含成本价
 router.get('/getSkuListByAdmin', checkAdminPermission, skuController.getSkuListByAdmin);
 
+// 增加满减打折
+router.post('/addAndUpdateDiscount', checkAdminPermission, discountController.addAndUpdateDiscount);
+
+
 /**
  * 优惠券管理
  */
@@ -50,6 +57,20 @@ router.post('/addCoupon', checkAdminPermission, couponController.addCoupon);
 
 // 删除优惠券
 router.post('/deleteCoupon', checkAdminPermission, couponController.deleteCoupon);
+
+/**
+ * 订单管理
+ */
+// 发货
+router.post('/shipOrder', orderController.shipOrder);
+
+// 后台用户查看自己绑定的订单
+router.get('/getOrderListBindUser', orderController.getOrderListBindUser);
+
+
+// 删除订单
+router.post('/deleteOrder', checkAdminPermission, orderController.deleteOrder);
+
 
 
 

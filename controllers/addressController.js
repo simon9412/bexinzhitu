@@ -36,11 +36,9 @@ async function addAddress(req, res) {
 
         // 如果已经有过地址，直接添加
         if (currentUser.addressInfo) {
-            currentUser.addressInfo.addressList.push(addressInfo);
-
             data = await Address.findOneAndUpdate(
                 { _id: currentUser.addressInfo._id },
-                { $set: { addressList: currentUser.addressInfo.addressList } },
+                { $push: { addressList: addressInfo } },
                 {
                     new: true,  // 返回更新后的文档，默认是返回更新前的文档
                     upsert: true // 如果不存在，则创建新的文档，默认是false

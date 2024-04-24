@@ -6,18 +6,15 @@ const orderController = require('../controllers/orderController');
 router.post('/submitOrder', orderController.submitOrder);
 
 // 取消订单
-router.post('/updateAddress', orderController.cancelOrder);
+router.post('/cancelOrder', orderController.cancelOrder);
 
-// 更新订单状态
-router.post('/deleteAddress', orderController.updateOrderStatus);
-
-// 删除订单
-router.post('/deleteAddress', orderController.deleteOrder);
+// // 删除订单
+// router.post('/deleteOrder', orderController.deleteOrder);
 
 // 订单列表
-router.get('/getAddressList', orderController.getOrderList);
+router.get('/getOrderList', orderController.getOrderList);
 
 // 通过订单id查询订单详情
-router.get('/getDefaultAddress', orderController.getOrderDetail);
+router.get('/getOrderDetail', orderController.getOrderDetail);
 
 module.exports = router;

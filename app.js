@@ -17,6 +17,8 @@ var addressRouter = require('./routes/addressRoutes');
 var orderRouter = require('./routes/orderRoutes');
 var couponRouter = require('./routes/couponRoutes');
 var adminRouter = require('./routes/adminRoutes');
+var payRouter = require('./routes/payRoutes');
+
 
 
 
@@ -49,6 +51,7 @@ app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/coupon', couponRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/pay', payRouter);
 
 
 

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { Sku } = require('../models/sku');
-const Wxuser = require('../models/wxuser');
 const statusCode = require('../common/statusCode');
 const { CATEGORY, BRAND_LIST } = require('../common/enum');
 
@@ -198,7 +197,7 @@ async function addSku(req, res) {
             brandName,
             originalPriceList,
             costPriceList,
-            inventory,
+            // inventory,
             description,
             image
         }) => {
@@ -218,7 +217,7 @@ async function addSku(req, res) {
                 brandName,
                 originalPriceList,
                 costPriceList,
-                inventory,
+                // inventory,
                 description,
                 image
             });
@@ -238,7 +237,7 @@ async function addSku(req, res) {
                 brandName: goodInfo.brandName,
                 originalPriceList: goodInfo.originalPriceList,
                 costPriceList: goodInfo.costPriceList,
-                inventory: goodInfo.inventory,
+                // inventory: goodInfo.inventory,
                 description: goodInfo.description,
                 image: goodInfo.image
             });
@@ -313,7 +312,7 @@ async function updateSku(req, res) {
                 specification: sku.specification ? sku.specification : existingProduct.specification,
                 property: sku.property ? sku.property : existingProduct.property,
                 unit: sku.unit ? sku.unit : existingProduct.unit,
-                inventory: sku.inventory ? sku.inventory : existingProduct.inventory,
+                // inventory: sku.inventory ? sku.inventory : existingProduct.inventory,
                 originalPriceList: sku.originalPriceList ? sku.originalPriceList : existingProduct.originalPriceList,
                 costPriceList: sku.costPriceList ? sku.costPriceList : existingProduct.costPriceList,
                 description: sku.description ? sku.description : existingProduct.description,
@@ -352,6 +351,7 @@ async function updateSku(req, res) {
             data: results
         });
     } catch (error) {
+        // console.log(error);
         return res.status(500).json({
             statusCode: statusCode.serverErr,
             msg: '服务器异常，更新商品信息失败'
@@ -495,7 +495,7 @@ async function searchSku(req, res) {
                         property: '$skuInfo.property',
                         unit: '$skuInfo.unit',
                         originalPriceList: '$skuInfo.originalPriceList',
-                        inventory: '$skuInfo.inventory',
+                        // inventory: '$skuInfo.inventory',
                         description: '$skuInfo.description',
                         image: '$skuInfo.image',
                     }
@@ -583,7 +583,6 @@ async function getSkuListByAdmin(req, res) {
         });
     }
 };
-
 
 module.exports = {
     getBrandList,
