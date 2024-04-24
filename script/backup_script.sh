@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd /
-
 # 源文件或目录路径
 source_path1="/etc"
 source_path2="/var/lib/mongo"
