@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// 折扣数据模型
+// 通知数据模型
 const NotifySchema = new mongoose.Schema(
     {
         

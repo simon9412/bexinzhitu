@@ -58,20 +58,24 @@ router.post('/addCoupon', checkAdminPermission, couponController.addCoupon);
 // 删除优惠券
 router.post('/deleteCoupon', checkAdminPermission, couponController.deleteCoupon);
 
+// 修改优惠券信息
+router.post('/updateCoupon', checkAdminPermission, couponController.updateCoupon);
+
+
 /**
  * 订单管理
  */
 // 发货
 router.post('/shipOrder', orderController.shipOrder);
 
-// 后台用户查看自己绑定的订单
-router.get('/getOrderListBindUser', orderController.getOrderListBindUser);
-
-
 // 删除订单
 router.post('/deleteOrder', checkAdminPermission, orderController.deleteOrder);
 
+// 修改订单信息
+router.post('/updateOrder', checkAdminPermission, orderController.updateOrder);
 
+// 后台用户查看自己绑定客户的订单
+router.get('/getOrderListBindUser', orderController.getOrderListBindUser);
 
 
 module.exports = router;

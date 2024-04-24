@@ -21,7 +21,7 @@ const OrderSchema = new mongoose.Schema(
             orderId: { type: String, unique: true }, // 订单id，最终存的是年月日时分秒毫秒+6个随机数字
             orderItems: [OrderItemSchema], // 订单商品信息
             cateSubtotal: [CateSubtotalSchem], // 订单大类小计
-            distributionMode: { type: String, enum: ['普通配送', '上门自提'], default: '普通配送' }, // 配送方式
+            distributionMode: { type: String, enum: ['普通配送', '上门自提', '货到付款'], default: '普通配送' }, // 配送方式
             deliveryDate: { type: String, required: true }, // 期望送达日期
             elevator: { type: String, enum: ['楼梯', '电梯'], default: '楼梯' }, // 是否电梯，默认楼梯
             couponId: { type: String, default: '未使用' }, // 是否使用了优惠券，用了则保存的是id

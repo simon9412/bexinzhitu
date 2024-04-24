@@ -2,20 +2,13 @@ const Address = require('../models/address');
 const Wxuser = require('../models/wxuser');
 const statusCode = require('../common/statusCode');
 
-
-// var addressIndo = {
-//     recipientName: { type: String, required: true }, // 收货人姓名
-//     phone: { type: String, required: true }, // 收货人电话号码
-//     province: { type: String, required: true }, // 省
-//     provinceCode: { type: String, required: true }, // 省编码
-//     city: { type: String, required: true }, // 市
-//     cityCode: { type: String, required: true }, // 市编码
-//     district: { type: String, required: true }, // 区
-//     districtCode: { type: String, required: true }, // 区编码
-//     detail: { type: String, required: true }, // 详细地址
-//     isDefault: { type: Boolean, default: false }, // 是否默认
-// };
-
+// 找到当前用户
+async function findUser(openId) {
+    return await Wxuser.findOne({ openId: openId })
+        .populate({ path: 'addressInfo', select: { __v: 0 } })
+        .select({ _id: 0, __v: 0 })
+        .exec();
+}
 
 /**
  * @description 新增收货地址
@@ -29,10 +22,7 @@ async function addAddress(req, res) {
     try {
         var data;
         // 找到当前用户
-        const currentUser = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'addressInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(req.auth.openid);
 
         // 如果已经有过地址，直接添加
         if (currentUser.addressInfo) {
@@ -73,10 +63,7 @@ async function updateAddress(req, res) {
     const { addressId, addressInfo } = req.body;
 
     try {
-        var currentUser = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'addressInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        var currentUser = await findUser(req.auth.openid);
 
         if (addressInfo.isDefault === true) {
             // 将其他地址的isDefault字段设为false
@@ -134,10 +121,7 @@ async function deleteAddress(req, res) {
     const { addressId } = req.body;
 
     try {
-        const currentUser = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'addressInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(req.auth.openid);
 
         // 找到需要删除的地址
         const needDelete = currentUser.addressInfo.addressList.filter(item => String(item._id) === addressId);
@@ -182,10 +166,7 @@ async function deleteAddress(req, res) {
  */
 async function getAddressList(req, res) {
     try {
-        const currentUser = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'addressInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(req.auth.openid);
 
         return res.status(200).json({
             statusCode: statusCode.success,
@@ -208,10 +189,7 @@ async function getAddressList(req, res) {
  */
 async function getDefaultAddress(req, res) {
     try {
-        const currentUser = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'addressInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(req.auth.openid);
 
         // 找到默认的地址
         const data = currentUser.addressInfo.addressList.filter(item => item.isDefault === true);

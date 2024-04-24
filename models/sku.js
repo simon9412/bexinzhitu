@@ -159,7 +159,7 @@ const OtherSchema = new mongoose.Schema({
     image: { type: String, default: '' }, // 商品图片 url
     originalPriceList: {
         type: [{
-            floor: { type: String, default: '1' },
+            floor: { type: String, default: '1' }, // 0代表电梯，1代表1楼，2代表2楼，3代表3楼，4代表4楼，5代表5楼
             price: {
                 type: Number, min: 0.01, default: 999.99
             }

@@ -3,6 +3,14 @@ const Wxuser = require('../models/wxuser');
 const { Sku } = require('../models/sku');
 const statusCode = require('../common/statusCode');
 
+// 找到当前用户
+async function findUser(openId) {
+    return await Wxuser.findOne({ openId: openId })
+        .populate({ path: 'cartInfo', select: { __v: 0 } })
+        .select({ _id: 0, __v: 0 })
+        .exec();
+}
+
 /**
  * @description 添加购物车和继续新增或者减少
  * @method POST
@@ -16,10 +24,7 @@ async function addCart(req, res) {
     try {
         var data;
         // 找到当前用户及cartInfo
-        const currentUser = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'cartInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(req.auth.openid);
 
         // 找到商品信息
         const goodInfo = await Sku.findOne({ goodId })
@@ -89,10 +94,8 @@ async function addCart(req, res) {
  */
 async function getCartList(req, res) {
     try {
-        const data = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'cartInfo', select: { _id: 0, __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const data = await findUser(req.auth.openid);
+
         if (!data || !data.cartInfo) {
             return res.status(200).json({
                 statusCode: statusCode.success,
@@ -160,10 +163,7 @@ async function removeCart(req, res) {
     const { goodIds } = req.body;
 
     try {
-        const data = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'cartInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const data = await findUser(req.auth.openid);
 
         // 过滤掉传入的goodid，返回剩下的list，将剩下的list更新
         const filteredCartList = data.cartInfo.cartList.filter(item => !goodIds.includes(item.goodId));
@@ -200,10 +200,7 @@ async function updateChecked(req, res) {
     const { cartList } = req.body;
 
     try {
-        const data = await Wxuser.findOne({ openId: req.auth.openid })
-            .populate({ path: 'cartInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const data = await findUser(req.auth.openid);
 
         const updatedCartList = data.cartInfo.cartList.map(itemOld => {
             // 找到需要改的gooid

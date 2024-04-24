@@ -408,12 +408,19 @@ async function deleteUser(req, res) {
  * @returns Promise
  */
 async function getProfileInfo(req, res) {
-    const user = await UserInfo.findOne({ phoneNumber: req.auth.phoneNumber }).select({ password: 0, _id: 0, __v: 0 });
-    return res.status(200).json({
-        statusCode: statusCode.success,
-        msg: 'success',
-        data: [user]
-    });
+    try {
+        const user = await UserInfo.findOne({ phoneNumber: req.auth.phoneNumber }).select({ password: 0, _id: 0, __v: 0 });
+        return res.status(200).json({
+            statusCode: statusCode.success,
+            msg: 'success',
+            data: [user]
+        });
+    } catch (error) {
+        return res.status(500).json({
+            statusCode: statusCode.serverErr,
+            msg: '服务器异常，请稍后重试'
+        });
+    }
 }
 
 /**

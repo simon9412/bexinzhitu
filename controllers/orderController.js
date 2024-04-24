@@ -258,6 +258,121 @@ async function submitOrder(req, res) {
 }
 
 /**
+ * @description 管理员修改订单价格或数量等信息
+ * @param {*} orderId - 订单id
+ * @param {Object} orderInfo 订单信息
+ * @returns Promise
+ */
+async function updateOrder(req, res) {
+    const { orderId, orderInfo } = req.body;
+
+    try {
+        const oldOrderInfo = await Order.findOne(
+            { "orderList": { $elemMatch: { "orderId": orderId } } },
+            { "orderList.$": 1 }
+        );
+
+        if (!oldOrderInfo) {
+            return res.status(400).json({
+                statusCode: statusCode.paramErr,
+                msg: 'orderId不存在',
+                data: []
+            });
+        }
+
+        if (oldOrderInfo.orderList[0].status === 'shipped') {
+            return res.status(200).json({
+                statusCode: statusCode.failed,
+                msg: '订单已发货，无法修改信息',
+                data: []
+            });
+        }
+
+        if (oldOrderInfo.orderList[0].status === 'completed') {
+            return res.status(200).json({
+                statusCode: statusCode.failed,
+                msg: '订单已完成，无法修改信息',
+                data: []
+            });
+        }
+
+        if (oldOrderInfo.orderList[0].status === 'cancelled') {
+            return res.status(200).json({
+                statusCode: statusCode.failed,
+                msg: '订单已取消，无法修改信息',
+                data: []
+            });
+        }
+
+        let newOrderInfo = {
+            orderItems: orderInfo.orderItems ? orderInfo.orderItems : oldOrderInfo.orderList[0].orderItems, // 订单商品信息
+            cateSubtotal: orderInfo.cateSubtotal ? orderInfo.cateSubtotal : oldOrderInfo.orderList[0].cateSubtotal, // 订单大类小计
+            distributionMode: orderInfo.distributionMode ? orderInfo.distributionMode : oldOrderInfo.orderList[0].distributionMode, // 配送方式
+            deliveryDate: orderInfo.deliveryDate ? orderInfo.deliveryDate : oldOrderInfo.orderList[0].deliveryDate, // 期望送达日期
+            couponId: orderInfo.couponId ? orderInfo.couponId : oldOrderInfo.orderList[0].couponId,// 是否使用了优惠券，用了则保存的是id
+            elevator: orderInfo.elevator ? orderInfo.elevator : oldOrderInfo.orderList[0].elevator, // 是否电梯，默认楼梯
+            freight: orderInfo.freight !== undefined ? orderInfo.freight : oldOrderInfo.orderList[0].freight, // 货运费
+            porterage: orderInfo.porterage !== undefined ? orderInfo.porterage : oldOrderInfo.orderList[0].porterage, // 人工搬运费
+            totalDiscount: orderInfo.totalDiscount !== undefined ? orderInfo.totalDiscount : oldOrderInfo.orderList[0].totalDiscount, // 总优惠，含折扣和券
+            totalPrice: orderInfo.totalPrice !== undefined ? orderInfo.totalPrice : oldOrderInfo.orderList[0].totalPrice, // 订单总原价
+            totalPayment: orderInfo.totalPayment !== undefined ? orderInfo.totalPayment : oldOrderInfo.orderList[0].totalPayment, // 订单总折扣价
+            useBalance: orderInfo.useBalance !== undefined ? orderInfo.useBalance : oldOrderInfo.orderList[0].useBalance,// 使用了多少余额，默认0，支付后更新
+            status: orderInfo.status ? orderInfo.status : oldOrderInfo.orderList[0].status, // 订单状态 pending待支付、paid已支付、shipped已发货、completed已完成、cancelled已取消
+            address: orderInfo.address ? orderInfo.address : oldOrderInfo.orderList[0].address, // 收货地址
+            description: orderInfo.description ? orderInfo.description : oldOrderInfo.orderList[0].description, // 订单备注
+            shippedAt: orderInfo.shippedAt ? orderInfo.shippedAt : oldOrderInfo.orderList[0].shippedAt // 订单发货时间
+        };
+
+        if (orderInfo.freight !== undefined || orderInfo.porterage !== undefined || orderInfo.totalDiscount !== undefined) {
+            newOrderInfo.totalPrice = util.adds(
+                oldOrderInfo.orderList[0].totalPrice,
+                -oldOrderInfo.orderList[0].freight,
+                -oldOrderInfo.orderList[0].porterage,
+                newOrderInfo.freight,
+                newOrderInfo.porterage
+            );
+            newOrderInfo.totalPayment = util.adds(newOrderInfo.totalPrice, -newOrderInfo.totalDiscount);
+        }
+
+        await Order.findOneAndUpdate(
+            { "orderList.orderId": orderId },
+            {
+                $set: {
+                    "orderList.$.orderItems": newOrderInfo.orderItems,
+                    "orderList.$.cateSubtotal": newOrderInfo.cateSubtotal,
+                    "orderList.$.distributionMode": newOrderInfo.distributionMode,
+                    "orderList.$.deliveryDate": newOrderInfo.deliveryDate,
+                    "orderList.$.couponId": newOrderInfo.couponId,
+                    "orderList.$.elevator": newOrderInfo.elevator,
+                    "orderList.$.freight": newOrderInfo.freight,
+                    "orderList.$.porterage": newOrderInfo.porterage,
+                    "orderList.$.totalDiscount": newOrderInfo.totalDiscount,
+                    "orderList.$.totalPrice": newOrderInfo.totalPrice,
+                    "orderList.$.totalPayment": newOrderInfo.totalPayment,
+                    "orderList.$.useBalance": newOrderInfo.useBalance,
+                    "orderList.$.status": newOrderInfo.status,
+                    "orderList.$.address": newOrderInfo.address,
+                    "orderList.$.description": newOrderInfo.description,
+                    "orderList.$.shippedAt": newOrderInfo.shippedAt
+                }
+            }
+        );
+
+        return res.status(200).json({
+            statusCode: statusCode.success,
+            msg: '修改信息成功',
+            data: []
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            statusCode: statusCode.serverErr,
+            msg: '服务器异常，请稍后重试'
+        });
+    }
+}
+
+/**
  * @description
  * @method POST
  * @param {*} params 
@@ -460,25 +575,25 @@ async function getOrderListBindUser(req, res) {
             msg: '无权限操作'
         });
     }
-    // 找到当前后台用户绑定的wx用户
-    const user = await UserInfo.find({ phoneNumber: req.auth.phoneNumber });
-    const bindUserList = user[0].bindInfo;
-    console.log(bindUserList);
-
-    // 获取每个用户的信息
-    const bindUserInfo = await Promise.all(bindUserList.map(async (item) => {
-        const bindUser = await findUser(item);
-        // console.log(bindUser);
-        return bindUser;
-    }));
-    console.log(bindUserInfo);
-
 
     try {
+        // 找到当前后台用户绑定的wx用户
+        const user = await UserInfo.find({ phoneNumber: req.auth.phoneNumber });
+        const bindUserList = user[0].bindInfo;
+
+        // 获取每个用户的订单信息
+        const bindUserInfo = await Promise.all(bindUserList.map(async (item) => {
+            const bindUser = await findUser(item);
+            return {
+                openId: bindUser.openId,
+                phoneNumber: bindUser.phoneNumber,
+                orderInfo: bindUser.orderInfo
+            };
+        }));
         return res.status(200).json({
             statusCode: statusCode.success,
             msg: 'success',
-            data: []
+            data: bindUserInfo
         });
     } catch (error) {
         return res.status(500).json({
@@ -490,6 +605,7 @@ async function getOrderListBindUser(req, res) {
 
 module.exports = {
     submitOrder,
+    updateOrder,
     cancelOrder,
     shipOrder,
     deleteOrder,

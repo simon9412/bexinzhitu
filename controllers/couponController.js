@@ -3,6 +3,13 @@ const Coupon = require('../models/coupon');
 const statusCode = require('../common/statusCode');
 const { getRandom, getDate } = require('../common/util');
 
+// 找到当前用户
+async function findUser(openId) {
+    return await Wxuser.findOne({ openId: openId })
+        .populate({ path: 'couponInfo', select: { __v: 0 } })
+        .select({ _id: 0, __v: 0 })
+        .exec();
+}
 
 /**
  * @description 发放优惠券,限管理员操作
@@ -16,10 +23,7 @@ async function addCoupon(req, res) {
     try {
         var data;
         // 找到需要添加优惠券的用户
-        const currentUser = await Wxuser.findOne({ openId: openId })
-            .populate({ path: 'couponInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(openId);
 
         // 生成优惠券id及修改使用状态
         const couponListWithId = couponList.map(coupon => {
@@ -109,6 +113,64 @@ async function deleteCoupon(req, res) {
 }
 
 /**
+ * @description 修改优惠券信息，仅限管理员操作
+ * @method POST
+ * @param {String} couponId 
+ * @param {*} res 
+ * @returns Promise
+ */
+async function updateCoupon(req, res) {
+    const { couponId, couponInfo } = req.body;
+
+    try {
+        const coupon = await Coupon.findOne(
+            { "couponList": { $elemMatch: { "couponId": couponId } } },
+            { "couponList.$": 1 }
+        );
+
+        if (!coupon) {
+            return res.status(400).json({
+                statusCode: statusCode.failed,
+                msg: '优惠券不存在'
+            });
+        }
+
+        const newCouponInfo = {
+            couponFee: couponInfo.couponFee ? couponInfo.couponFee : coupon.couponList[0].couponFee,
+            targetAmount: couponInfo.targetAmount ? couponInfo.targetAmount : coupon.couponList[0].targetAmount,
+            useTime: couponInfo.useTime ? couponInfo.useTime : coupon.couponList[0].useTime,
+            expiredTime: couponInfo.expiredTime ? couponInfo.expiredTime : coupon.couponList[0].expiredTime,
+            status: couponInfo.status ? couponInfo.status : coupon.couponList[0].status
+        };
+
+        await Coupon.findOneAndUpdate(
+            { "couponList.couponId": couponId },
+            {
+                $set: {
+                    "couponList.$.couponFee": newCouponInfo.couponFee,
+                    "couponList.$.targetAmount": newCouponInfo.targetAmount,
+                    "couponList.$.useTime": newCouponInfo.useTime,
+                    "couponList.$.expiredTime": newCouponInfo.expiredTime,
+                    "couponList.$.status": newCouponInfo.status,
+                }
+            }
+        );
+
+        return res.status(200).json({
+            statusCode: statusCode.success,
+            msg: '修改成功',
+            data: []
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            statusCode: statusCode.serverErr,
+            msg: '服务器异常，请稍后重试'
+        });
+    }
+}
+
+/**
  * @description 获取优惠券列表
  * @method GET
  * @param {String} openId - 用户唯一标识,不传则默认查询当前登录用户
@@ -119,10 +181,7 @@ async function getCouponList(req, res) {
 
     try {
         // 找到当前用户的优惠券信息
-        const currentUser = await Wxuser.findOne({ openId: openId ? openId : req.auth.openid })
-            .populate({ path: 'couponInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(openId ? openId : req.auth.openid);
 
         //如果用户不存在或者用户没有优惠券信息
         if (!currentUser || !currentUser.couponInfo) {
@@ -181,10 +240,7 @@ async function getMostFavorableCoupon(req, res) {
     const { openId, totalPrice } = req.query;
     try {
         // 找到当前用户
-        const currentUser = await Wxuser.findOne({ openId: openId ? openId : req.auth.openid })
-            .populate({ path: 'couponInfo', select: { __v: 0 } })
-            .select({ _id: 0, __v: 0 })
-            .exec();
+        const currentUser = await findUser(openId ? openId : req.auth.openid);
 
         if (!currentUser || !currentUser.couponInfo) {
             return res.status(200).json({
@@ -259,10 +315,10 @@ async function getMostFavorableCoupon(req, res) {
     }
 }
 
-
 module.exports = {
     addCoupon,
     deleteCoupon,
+    updateCoupon,
     getCouponList,
     getMostFavorableCoupon
 };
