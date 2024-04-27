@@ -5,7 +5,7 @@ const { jwtVerify, jwtError } = require('./common/jwt');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+const cors = require('cors');
 const { connectMongoDB } = require('./models/mongo');
 
 var indexRouter = require('./routes/index');
