@@ -6,6 +6,8 @@ const skuController = require('../controllers/skuController');
 const couponController = require('../controllers/couponController');
 const orderController = require('../controllers/orderController');
 const discountController = require('../controllers/discountController');
+const auditController = require('../controllers/auditController');
+
 
 const { checkAdminPermission, checkGroupPermission } = require('../common/jwt');
 
@@ -76,6 +78,18 @@ router.post('/updateOrder', checkAdminPermission, orderController.updateOrder);
 
 // 后台用户查看自己绑定客户的订单
 router.get('/getOrderListBindUser', orderController.getOrderListBindUser);
+
+/**
+ * 审核订单
+ */
+// 审核列表
+router.get('/auditList', checkGroupPermission, auditController.auditList);
+
+// group通过审核，正常应该通过完了再提交给admin审核，暂时先做group审核即可
+router.post('/acceptAudit', checkGroupPermission, auditController.acceptAudit);
+
+// 拒绝审核
+router.post('/rejectAudit', checkGroupPermission, auditController.rejectAudit);
 
 
 module.exports = router;

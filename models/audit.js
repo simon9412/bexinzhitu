@@ -19,6 +19,7 @@ const CateSubtotalSchem = new mongoose.Schema({
 const AuditSchema = new mongoose.Schema(
     {
         auditId: { type: String, unique: true }, // 审核单id
+        auditUser: { type: String, required: true }, // 提交审核的用户记录Phone
         orderId: { type: String }, // 订单id，最终存的是年月日时分秒毫秒+6个随机数字
         orderItems: [OrderItemSchema], // 订单商品信息
         cateSubtotal: [CateSubtotalSchem], // 订单大类小计
@@ -35,7 +36,7 @@ const AuditSchema = new mongoose.Schema(
         address: { type: String }, // 收货地址 
         description: { type: String }, // 订单备注
         shippedAt: { type: Date }, // 订单发货时间
-        auditStatus: { type: String, enum: ['待group审核', '待admin审核', '审核通过', '审核不通过'] } // 审核状态
+        auditStatus: { type: String, enum: ['pending_group', 'pending_admin', 'accepted', 'rejected', 'cancelled'] } // 审核状态
     },
     {
         timestamps: true
