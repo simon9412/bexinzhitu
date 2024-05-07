@@ -162,7 +162,7 @@ async function login(req, res) {
         // 验证密码是否匹配
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({
+            return res.status(200).json({
                 statusCode: statusCode.failed,
                 msg: '密码错误'
             });
