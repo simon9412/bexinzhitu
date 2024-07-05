@@ -29,7 +29,8 @@ function jwtVerify() {
                 methods: ['GET']
             },
             '/api/wxusers/wxLogin',
-            'api/pay/getNotify'
+            'api/pay/getNotify',
+            /^\/api\/config\/\w+/
         ]
     })
 };

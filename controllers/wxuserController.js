@@ -2,8 +2,8 @@ const Wxuser = require('../models/wxuser');
 const UserInfo = require('../models/user');
 const axios = require('axios');
 const statusCode = require('../common/statusCode');
-const bcrypt = require('bcryptjs');
 const { jwtCreate } = require('../common/jwt');
+const { URL } = require('../common/enum');
 
 /**
  * @description 微信登录，并存储用户信息
@@ -16,7 +16,7 @@ async function wxLogin(req, res) {
     const { code, expiresTime } = req.body;
     try {
         // 向微信服务器发送请求，获取用户 OpenID 和 SessionKey
-        const response = await axios.get(`https://api.weixin.qq.com/sns/jscode2session`, {
+        const response = await axios.get(URL.wxLogin, {
             params: {
                 appid: process.env.APPID,
                 secret: process.env.SECRET,
